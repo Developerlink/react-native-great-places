@@ -4,6 +4,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { enableScreens } from "react-native-screens";
 import { Provider } from "react-redux";
+import store from "./src/store/store";
 import { NavigationContainer } from "@react-navigation/native";
 import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
@@ -33,14 +34,16 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1}}>
-      <StatusBar
-        backgroundColor={colors.primaryDark}
-        style={Platform.OS === "android" ? "light" : "dark"}
-      />
-      <NavigationContainer>
-        <PlacesStackNavigator />
-      </NavigationContainer>
-    </View>
+    <Provider store={store}>
+      <View style={{ flex: 1 }}>
+        <StatusBar
+          backgroundColor={colors.primaryDark}
+          style={Platform.OS === "android" ? "light" : "dark"}
+        />
+        <NavigationContainer>
+          <PlacesStackNavigator />
+        </NavigationContainer>
+      </View>
+    </Provider>
   );
 }

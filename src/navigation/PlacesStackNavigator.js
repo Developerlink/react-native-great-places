@@ -12,19 +12,20 @@ const Stack = createNativeStackNavigator();
 export default function PlacesStackNavigator({ navigation, route }) {
   return (
     <Stack.Navigator
-      initialRouteName="/map"
+      initialRouteName="/list"
       screenOptions={{
         headerStyle: {
           backgroundColor: Platform.OS === "android" ? colors.primary : "",
         },
         headerTintColor: Platform.OS === "android" ? "white" : colors.primary,
-        ...defaultHeaderOptions,
+        ...defaultHeaderOptions,                
       }}
+      transi
     >
       <Stack.Screen
         name="/list"
         component={PlacesListScreen}
-        options={{ title: "List of Places" }}
+        options={{ title: "All Places" }}
       />
       <Stack.Screen
         name="/details"
@@ -34,7 +35,7 @@ export default function PlacesStackNavigator({ navigation, route }) {
       <Stack.Screen
         name="/new"
         component={NewPlaceScreen}
-        options={{ title: "New Place" }}
+        options={{ title: "Add Place" }}
       />
       <Stack.Screen
         name="/map"
