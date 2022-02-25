@@ -6,13 +6,14 @@ import MapScreen from "../screens/MapScreen";
 import NewPlaceScreen from "../screens/NewPlaceScreen";
 import PlacesDetailScreen from "../screens/PlaceDetailScreen";
 import PlacesListScreen from "../screens/PlacesListScreen";
+import TestCamera from "../screens/TestCamera";
 
 const Stack = createNativeStackNavigator();
 
 export default function PlacesStackNavigator({ navigation, route }) {
   return (
     <Stack.Navigator
-      initialRouteName="/list"
+      initialRouteName="/test"
       screenOptions={{
         headerStyle: {
           backgroundColor: Platform.OS === "android" ? colors.primary : "",
@@ -41,6 +42,11 @@ export default function PlacesStackNavigator({ navigation, route }) {
         name="/map"
         component={MapScreen}
         options={{ title: "Map" }}
+      />
+      <Stack.Screen
+        name="/test"
+        component={TestCamera}
+        options={{ title: "Test" }}
       />
     </Stack.Navigator>
   );

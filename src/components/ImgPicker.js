@@ -1,20 +1,37 @@
 import React from "react";
-import { View, Text, Button, StyleSheet, Image, Alert } from "react-native";
+import { View, Text, Button, StyleSheet, Image, Alert, PermissionsAndroid } from "react-native";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
+import * as MediaLibrary from 'expo-media-library';
+import { Camera } from "expo-camera";
 
 export default function ImgPicker(props) {
+  const [cameraPermissionStatus, requestCameraPermission] =
+    ImagePicker.useCameraPermissions();
+  const [mediaLibraryPermissionStatus, requestMediaLibraryPermission] =
+    ImagePicker.useMediaLibraryPermissions();
+
   const getPermissions = async () => {
-    const result = await Permissions.askAsync(Permissions.CAMERA, MEDIA_LIBRARY);
-    if (result.status !== "granted") {
+    let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    console.log(result);
+
+    if (result.granted === false) {
       Alert.alert(
         "Insufficient permissions!",
         "You need to grant camera permissions to use this app.",
         [{ text: "Ok" }]
       );
       return false;
-    }
+    } 
     return true;
+  };
+
+  const takeImageHandler = async () => {
+    const hasPermission = await getPermissions();
+    if (!hasPermission) return;
+    ImagePicker.launchCameraAsync({
+      
+    });
   };
 
   return (
@@ -26,11 +43,7 @@ export default function ImgPicker(props) {
       <Button
         title="Take Image"
         color={colors.secondary}
-        onPress={async () => {
-          const hasPermission = await getPermissions();
-          if (!hasPermission) return;
-          ImagePicker.launchCameraAsync();
-        }}
+        onPress={takeImageHandler}
       />
     </View>
   );
