@@ -29,7 +29,7 @@ export default function PlacesListScreen({ navigation, route }) {
       data={places}
       renderItem={(itemData) => (
         <PlaceItem
-          image={null}
+          image={itemData.item.image}
           title={itemData.item.title}
           address={null}
           onSelect={() =>

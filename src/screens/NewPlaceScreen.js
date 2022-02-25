@@ -9,13 +9,18 @@ import {
 } from "react-native";
 import colors from "../constants/colors";
 import { useSelector, useDispatch } from "react-redux";
-import { addPlace } from "../store/placesSlice";
 import ImgPicker from "../components/ImgPicker";
+import { addPlaceAsync } from "../store/placesSlice";
 
 export default function NewPlaceScreen({ navigation, route }) {
   const [title, setTitle] = useState("");
   const { status } = useSelector((state) => state.places);
   const dispatch = useDispatch();
+  const [image, setImage] = useState();
+
+  const imageTakeHandler = (imageUri) => {
+    setImage(imageUri);
+  };
 
   return (
     <ScrollView>
@@ -26,12 +31,12 @@ export default function NewPlaceScreen({ navigation, route }) {
           value={title}
           onChangeText={(value) => setTitle(value)}
         />
-        <ImgPicker />
+        <ImgPicker onImageTaken={imageTakeHandler} />
         <Button
           title="Save Place"
           color={colors.secondary}
           onPress={() => {
-            dispatch(addPlace({ title }));
+            dispatch(addPlaceAsync({ title, image }));
             navigation.goBack();
           }}
         />
