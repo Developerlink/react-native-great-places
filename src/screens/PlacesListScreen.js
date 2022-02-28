@@ -5,9 +5,11 @@ import CustomHeaderButton from "../components/CustomHeaderButton";
 import { useSelector, useDispatch } from "react-redux";
 import PlaceItem from "../components/PlaceItem";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { getPlacesAsync } from "../store/placesSlice";
 
 export default function PlacesListScreen({ navigation, route }) {
   const { places } = useSelector((state) => state.places);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     navigation.setOptions({
@@ -24,12 +26,16 @@ export default function PlacesListScreen({ navigation, route }) {
     });
   }, []);
 
+  useEffect(() => {
+    dispatch(getPlacesAsync());
+  }, [dispatch])
+
   return (
     <FlatList
       data={places}
       renderItem={(itemData) => (
         <PlaceItem
-          image={itemData.item.image}
+          imageUri={itemData.item.imageUri}
           title={itemData.item.title}
           address={null}
           onSelect={() =>

@@ -10,7 +10,16 @@ import AppLoading from "expo-app-loading";
 import * as Font from "expo-font";
 import colors from "./src/constants/colors";
 import PlacesStackNavigator from "./src/navigation/PlacesStackNavigator";
+import { init } from "./src/services/db";
 
+init()
+  .then(() => {
+    console.log("Initialized database");
+  })
+  .catch((error) => {
+    console.log("Initializing db failed.");
+    console.log(error);
+  });
 enableScreens();
 
 const fetchFontsAsync = async () => {

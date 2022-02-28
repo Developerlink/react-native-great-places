@@ -56,6 +56,7 @@ export default function Test({ navigation, route }) {
 
 //https://snack.expo.dev/
 //https://docs.expo.dev/versions/v44.0.0/sdk/camera/
+//https://reactnative.dev/img/tiny_logo.png
 
 const styles = StyleSheet.create({
   container: {

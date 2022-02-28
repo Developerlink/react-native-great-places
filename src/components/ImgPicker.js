@@ -18,7 +18,7 @@ export default function ImgPicker(props) {
 
   const getPermissions = async () => {
     let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    console.log(result);
+    //console.log(result);
     if (result.status !== "granted") {
       Alert.alert(
         "Insufficient permissions!",
@@ -56,7 +56,7 @@ export default function ImgPicker(props) {
       </View>
       <Button
         title="Take Image"
-        color={colors.secondary}
+        color={colors.primary}
         onPress={takeImageHandler}
       />
     </View>
@@ -66,12 +66,11 @@ export default function ImgPicker(props) {
 const styles = StyleSheet.create({
   imagePicker: {
     alignItems: "center",
-    marginBottom: 15
   },
   imagePreview: {
     width: "100%",
     height: 200,
-    marginBottom: 10,
+    marginBottom: 15,
     justifyContent: "center",
     alignItems: "center",
     borderColor: "#ccc",
