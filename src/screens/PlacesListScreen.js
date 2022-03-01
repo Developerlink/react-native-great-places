@@ -37,7 +37,7 @@ export default function PlacesListScreen({ navigation, route }) {
         <PlaceItem
           imageUri={itemData.item.imageUri}
           title={itemData.item.title}
-          address={null}
+          address={itemData.item.latitude}
           onSelect={() =>
             navigation.navigate("/details", { id: itemData.item.id })
           }

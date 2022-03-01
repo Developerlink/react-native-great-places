@@ -1,6 +1,5 @@
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
-import vars from "../../env";
+import {Text, View, Image, StyleSheet } from "react-native";
 
 export default function MapPreView(props) {
   let imagePreviewUrl;
@@ -11,8 +10,11 @@ export default function MapPreView(props) {
 
   return (
     <View style={{...styles.mapPreview, ...props.style }}>
-      {props.location ? (
-        <Image style={styles.mapImage} source={{ uri: imagePreviewUrl }} />
+      {props.location !== "none" ? (
+        <View>
+        <Text>lat: {props.location.latitude}</Text>
+        <Text>long: {props.location.longitude}</Text>
+        </View>
       ) : (
         props.children
       )}

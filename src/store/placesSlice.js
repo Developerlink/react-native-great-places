@@ -6,6 +6,7 @@ import * as MediaLibrary from "expo-media-library";
 const initialState = {
   places: [],
   status: "idle",
+  pickedLocation: "none",
 };
 
 export const addPlaceAsync = createAsyncThunk(
@@ -41,12 +42,18 @@ export const addPlaceAsync = createAsyncThunk(
           data.title,
           asset.uri,
           "TestStreet 45",
-          15.6,
-          12.3
+          data.latitude,
+          data.longitude
         );
         //console.log(dbResult);
 
-        return { id: asset.id, title: data.title, imageUri: asset.uri };
+        return {
+          id: asset.id,
+          title: data.title,
+          imageUri: asset.uri,
+          latitude: data.latitude,
+          longitude: data.longitude,
+        };
       }
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error });
@@ -85,12 +92,13 @@ const placesSlice = createSlice({
   reducers: {
     addPlace: (state, action) => {
       let currentPlaces = state.places;
-      currentPlaces.push({
-        id: new Date().toISOString(),
-        title: action.payload.title,
-        image: action.payload.image,
-      });
+      currentPlaces.push(action.payload);
       state.places = currentPlaces;
+    },
+    setLocation: (state, action) => {
+      // console.log("inside the slice");
+      // console.log(action.payload);
+      state.pickedLocation = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -146,5 +154,5 @@ const placesSlice = createSlice({
   },
 });
 
-export const { addPlace } = placesSlice.actions;
+export const { setLocation, addPlace } = placesSlice.actions;
 export default placesSlice;

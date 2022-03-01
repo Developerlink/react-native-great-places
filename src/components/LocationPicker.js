@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   View,
   Button,
@@ -10,10 +10,22 @@ import {
 import colors from "../constants/colors";
 import * as Location from "expo-location";
 import MapPreView from "./MapPreview";
+import { useFocusEffect } from "@react-navigation/native";
+import { useSelector, useDispatch } from "react-redux";
+import { setLocation } from "../store/placesSlice";
 
 export default function LocationPicker(props) {
-  const [location, setLocation] = useState();
+  const [localLocation, setLocalLocation] = useState();
   const [isFetching, setIsFetching] = useState(false);
+  const { pickedLocation } = useSelector((state) => state.places);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (pickedLocation !== "none") {
+      //console.log(pickedLocation);
+      setLocalLocation(pickedLocation);
+    }
+  }, [pickedLocation, props.onLocationPicked]);
 
   const getPermissions = async () => {
     let result = await Location.requestForegroundPermissionsAsync();
@@ -34,7 +46,7 @@ export default function LocationPicker(props) {
     if (!hasPermission) return;
     try {
       setIsFetching(true);
-      let currentLocation = {
+      let location = {
         coords: {
           accuracy: 11.470999717712402,
           altitude: 58,
@@ -47,12 +59,17 @@ export default function LocationPicker(props) {
         mocked: false,
         timestamp: 1646051471197,
       };
-      //currentLocation = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.Low});
-      setLocation({
-        latitude: currentLocation.coords.latitude,
-        longitude: currentLocation.coords.longitude,
+      location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Low,
       });
-      console.log(currentLocation);
+
+      dispatch(
+        setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        })
+      );
+      //console.log(location);
     } catch (error) {
       Alert.alert(
         "Could not fetch location",
@@ -63,20 +80,31 @@ export default function LocationPicker(props) {
     setIsFetching(false);
   };
 
+  const pickOnMapHandler = () => {
+    props.navigation.navigate("/map");
+  };
+
   return (
     <View style={styles.locationPicker}>
-      <MapPreView style={styles.mapPreview} location={location} >
+      <MapPreView style={styles.mapPreview} location={pickedLocation}>
         {isFetching ? (
           <ActivityIndicator size="large" color={colors.primary} />
         ) : (
-          <Text>No location chosen yet</Text>
+          <Text>No coordinates chosen yet</Text>
         )}
       </MapPreView>
-      <Button
-        title="Get user location"
-        color={colors.primary}
-        onPress={getLocationHandler}
-      />
+      <View style={styles.actions}>
+        <Button
+          title="Get user location"
+          color={colors.primary}
+          onPress={getLocationHandler}
+        />
+        <Button
+          title="Pick on map"
+          color={colors.primary}
+          onPress={pickOnMapHandler}
+        />
+      </View>
     </View>
   );
 }
@@ -93,5 +121,10 @@ const styles = StyleSheet.create({
     height: 150,
     borderColor: "#ccc",
     borderWidth: 1,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
   },
 });

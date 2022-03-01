@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   View,
   Text,
@@ -6,20 +6,20 @@ import {
   ScrollView,
   TextInput,
   Button,
+  Alert,
 } from "react-native";
 import colors from "../constants/colors";
 import { useSelector, useDispatch } from "react-redux";
 import ImgPicker from "../components/ImgPicker";
 import { addPlaceAsync, deletePlacesAsync } from "../store/placesSlice";
 import LocationPicker from "../components/LocationPicker";
+import env from "../../env";
 
 export default function NewPlaceScreen({ navigation, route }) {
   const [title, setTitle] = useState("");
-  const { status } = useSelector((state) => state.places);
+  const { status, pickedLocation } = useSelector((state) => state.places);
   const dispatch = useDispatch();
-  const [image, setImage] = useState(
-    "file:///storage/emulated/0/DCIM/39c19176-8220-40f6-8af1-d12af0960533.jpg"
-  );
+  const [image, setImage] = useState();
 
   const imageTakeHandler = (imageUri) => {
     setImage(imageUri);
@@ -35,15 +35,23 @@ export default function NewPlaceScreen({ navigation, route }) {
           onChangeText={(value) => setTitle(value)}
         />
         <ImgPicker onImageTaken={imageTakeHandler} />
-        <LocationPicker />
+        <LocationPicker navigation={navigation} route={route} />
         <View style={styles.button}>
           <Button
             title="Save Place"
             color={colors.secondary}
             onPress={() => {
               //dispatch(deletePlacesAsync());
-              dispatch(addPlaceAsync({ title, image }));
-              navigation.goBack();
+              if (pickedLocation === "none") {
+                Alert.alert(
+                  "A location is missing",
+                  "You need to get a location before you can save",
+                  [{ text: "Ok" }]
+                );
+              } else {
+                dispatch(addPlaceAsync({ title, image, ...pickedLocation }));
+                navigation.goBack();
+              }
             }}
           />
         </View>
