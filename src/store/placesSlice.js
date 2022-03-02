@@ -12,15 +12,15 @@ const initialState = {
 export const addPlaceAsync = createAsyncThunk(
   "/addPlaceAsync",
   async (data, thunkAPI) => {
+    // console.log(data);
     const fileName = data.image.split("/").pop();
     // console.log(fileName);
     const newPath = FileSystem.documentDirectory + fileName;
     // console.log(FileSystem.documentDirectory);
     // console.log(newPath);
-    const permission = await MediaLibrary.requestPermissionsAsync();
     try {
-      if (permission.granted) {
-        const asset = await MediaLibrary.createAssetAsync(data.image);
+      // if (permission.granted) {
+        //const asset = await MediaLibrary.createAssetAsync(data.image);
         //console.log(asset);
 
         // const result = await MediaLibrary.createAlbumAsync("Images", asset, false)
@@ -32,30 +32,31 @@ export const addPlaceAsync = createAsyncThunk(
         //   });
 
         // console.log(result);
-        // await FileSystem.moveAsync({
-        //   from: data.image,
-        //   to: newPath,
-        // });
+        await FileSystem.moveAsync({
+          from: data.image,
+          to: newPath,
+        });
 
         const dbResult = await dbAgent.insertPlace(
-          asset.id,
+          //asset.id,
           data.title,
-          asset.uri,
+          newPath,
           "TestStreet 45",
           data.latitude,
           data.longitude
         );
-        //console.log(dbResult);
+        console.log(dbResult);
 
         return {
-          id: asset.id,
+          id: new Date().toISOString(),
           title: data.title,
-          imageUri: asset.uri,
+          imageUri: newPath,
           latitude: data.latitude,
           longitude: data.longitude,
         };
-      }
+      // }
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue({ error: error });
     }
   }
@@ -106,7 +107,7 @@ const placesSlice = createSlice({
       state.status = "pendingAddPlace";
       console.log(state.status);
     }),
-      builder.addCase(addPlaceAsync.rejected, (state) => {
+      builder.addCase(addPlaceAsync.rejected, (state, action) => {
         console.log("failure");
         state.status = "idle";
         console.log(state.status);

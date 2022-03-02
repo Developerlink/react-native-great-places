@@ -15,34 +15,32 @@ import { useSelector, useDispatch } from "react-redux";
 import { setLocation } from "../store/placesSlice";
 
 export default function LocationPicker(props) {
-  const [localLocation, setLocalLocation] = useState();
   const [isFetching, setIsFetching] = useState(false);
   const { pickedLocation } = useSelector((state) => state.places);
   const dispatch = useDispatch();
+  const [locationPermissionStatus, requestLocationPermission] =
+    Location.useForegroundPermissions();
 
-  useEffect(() => {
-    if (pickedLocation !== "none") {
-      //console.log(pickedLocation);
-      setLocalLocation(pickedLocation);
-    }
-  }, [pickedLocation, props.onLocationPicked]);
-
-  const getPermissions = async () => {
-    let result = await Location.requestForegroundPermissionsAsync();
-    //console.log(result);
-    if (result.status !== "granted") {
-      Alert.alert(
-        "Insufficient permissions!",
-        "You need to grant permission to access location.",
-        [{ text: "Ok" }]
-      );
-      return false;
-    }
+  const getPermissions = async () => {    
+    // console.log(locationPermissionStatus);
+    if (locationPermissionStatus !== "granted") {
+      let result = await Location.requestForegroundPermissionsAsync();
+      //console.log(result);
+      if (result.status !== "granted") {
+        Alert.alert(
+          "Insufficient permissions!",
+          "You need to grant permission to access location.",
+          [{ text: "Ok" }]
+          );
+          return false;
+        }
+      }
     return true;
   };
 
   const getLocationHandler = async () => {
     const hasPermission = await getPermissions();
+    // console.log(hasPermission);
     if (!hasPermission) return;
     try {
       setIsFetching(true);
@@ -59,9 +57,9 @@ export default function LocationPicker(props) {
         mocked: false,
         timestamp: 1646051471197,
       };
-      location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Low,
-      });
+      // location = await Location.getCurrentPositionAsync({
+      //   accuracy: Location.Accuracy.Low,
+      // });
 
       dispatch(
         setLocation({

@@ -23,12 +23,12 @@ export const init = () => {
   return promise;
 };
 
-const insertPlace = async (id, title, imageUri, address, latitude, longitude) => {
+const insertPlace = async (title, imageUri, address, latitude, longitude) => {
   const promise = new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO places (id, title, imageUri, address, latitude, longitude) VALUES (?, ?, ?, ?, ?, ?);",
-        [id, title, imageUri, address, latitude, longitude],
+        "INSERT INTO places (title, imageUri, address, latitude, longitude) VALUES (?, ?, ?, ?, ?);",
+        [title, imageUri, address, latitude, longitude],
         (_, result) => {
           resolve(result);
         },

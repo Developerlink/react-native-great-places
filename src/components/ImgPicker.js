@@ -1,37 +1,35 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Button,
-  StyleSheet,
-  Image,
-  Alert,
-  PermissionsAndroid,
-} from "react-native";
+import { View, Text, Button, StyleSheet, Image, Alert } from "react-native";
 import colors from "../constants/colors";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import { Camera } from "expo-camera";
 
 export default function ImgPicker(props) {
   const [image, setImage] = useState(null);
+  const [cameraPermissionStatus, requestCameraPermission] =
+    ImagePicker.useCameraPermissions();
 
   const getPermissions = async () => {
-    let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    //console.log(result);
-    if (result.status !== "granted") {
-      Alert.alert(
-        "Insufficient permissions!",
-        "You need to grant camera permissions to use this app.",
-        [{ text: "Ok" }]
-      );
-      return false;
+    //console.log(cameraPermissionStatus);
+    if (cameraPermissionStatus.status !== "granted") {
+      let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      //console.log(result);
+      if (result.status !== "granted") {
+        Alert.alert(
+          "Insufficient permissions!",
+          "You need to grant camera permissions to use this app.",
+          [{ text: "Ok" }]
+        );
+        return false;
+      }
     }
+
     return true;
   };
 
   const takeImageHandler = async () => {
     const hasPermission = await getPermissions();
+    //console.log(hasPermission);
     if (!hasPermission) return;
 
     const image = await ImagePicker.launchCameraAsync({
@@ -40,7 +38,7 @@ export default function ImgPicker(props) {
       quality: 0.5,
     });
 
-    // console.log(image);
+    console.log(image);
     setImage(image.uri);
     props.onImageTaken(image.uri);
   };

@@ -11,9 +11,8 @@ import {
 import colors from "../constants/colors";
 import { useSelector, useDispatch } from "react-redux";
 import ImgPicker from "../components/ImgPicker";
-import { addPlaceAsync, deletePlacesAsync } from "../store/placesSlice";
+import { addPlaceAsync, deletePlacesAsync, setLocation } from "../store/placesSlice";
 import LocationPicker from "../components/LocationPicker";
-import env from "../../env";
 
 export default function NewPlaceScreen({ navigation, route }) {
   const [title, setTitle] = useState("");
@@ -50,6 +49,7 @@ export default function NewPlaceScreen({ navigation, route }) {
                 );
               } else {
                 dispatch(addPlaceAsync({ title, image, ...pickedLocation }));
+                dispatch(setLocation("none"));
                 navigation.goBack();
               }
             }}
